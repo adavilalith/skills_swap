@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkillSwap - Learn, Teach, Grow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['DM Sans', 'sans-serif'] },
+          colors: {
+            primary: { 400: '#00c896', 500: '#00b383' },
+            dark: { 800: '#1f1f1f', 700: '#2a2a2a', 600: '#3a3a3a', 500: '#4a4a4a' },
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+
+<body class="bg-dark-800 min-h-screen font-sans text-gray-100">
+
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6 bg-gradient-to-r from-primary-400 to-emerald-400 bg-clip-text text-transparent">
+    Community Forum
+  </h1>
+
+  <!-- Post a Question -->
+  <div class="bg-dark-700 p-6 rounded-xl mb-8">
+    <h2 class="text-xl font-semibold mb-4 text-gray-300">Ask a Question</h2>
+    <textarea id="questionInput" class="w-full bg-dark-600 p-4 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" rows="4" placeholder="What's your question?"></textarea>
+    <button id="postQuestionBtn" class="mt-4 px-6 py-2 bg-primary-400 text-dark-800 font-medium rounded-lg hover:opacity-90 transition-all">
+      Post Question
+    </button>
+  </div>
+
+  <!-- Questions List -->
+  <div id="questionsList" class="space-y-6">
+    <!-- Questions will appear here -->
+  </div>
+
+</div>
+
+<script>
+  // Firebase config
+  var firebaseConfig = {
+    apiKey: "AIzaSyBJrftwU-HT6UkeUkQVZekXccOQebi2Fd8",
+    authDomain: "skillsswap-df801.firebaseapp.com",
+    projectId: "skillsswap-df801",
+    storageBucket: "skillsswap-df801.appspot.com",
+    messagingSenderId: "638710357631",
+    appId: "1:638710357631:web:2b0dc4a9b779eae47ae94a",
+    measurementId: "G-1C3983Z2N1"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // Post a question
+  document.getElementById('postQuestionBtn').addEventListener('click', async () => {
+    const questionText = document.getElementById('questionInput').value.trim();
+    if (!questionText) {
+      alert('Please type a question.');
+      return;
+    }
+
+    const user = auth.currentUser;
+    if (!user) {
+      alert('You must be signed in to post a question.');
+      return;
+    }
+
+    try {
+      await db.collection('forum').add({
+        question: questionText,
+        answers: [],
+        likes: [],
+        created_at: firebase.firestore.FieldValue.serverTimestamp(),
+        user_id: user.uid
+      });
+
+      document.getElementById('questionInput').value = '';
+      loadQuestions();
+    } catch (error) {
+      console.error(error);
+      alert('Error posting question.');
+    }
+  });
+
+  // Load and display questions
+  async function loadQuestions() {
+    const questionsDiv = document.getElementById('questionsList');
+    questionsDiv.innerHTML = '';
+
+    const snapshot = await db.collection('forum').orderBy('created_at', 'desc').get();
+    if (snapshot.empty) {
+      questionsDiv.innerHTML = '<p class="text-gray-400">No questions yet. Be the first to ask!</p>';
+    }
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const questionHTML = `
+        <div class="bg-dark-700 p-6 rounded-xl">
+          <div class="flex justify-between items-center mb-2">
+            <div class="text-sm text-gray-400">User</div>
+            <button onclick="likeQuestion('${doc.id}')" class="text-primary-400 text-sm hover:underline">${data.likes.length} Likes</button>
+          </div>
+          <p class="text-lg mb-2">${data.question}</p>
+          <button onclick="showReplyForm('${doc.id}')" class="mt-2 text-primary-400 text-sm hover:underline">Reply</button>
+          
+          <div id="replies-${doc.id}" class="mt-4 space-y-4">
+            ${data.answers.map(answer => `
+              <div class="bg-dark-600 p-4 rounded-lg">
+                <p class="text-gray-300">${answer}</p>
+              </div>
+            `).join('')}
+          </div>
+
+          <div id="replyForm-${doc.id}" class="mt-4 hidden">
+            <textarea id="replyInput-${doc.id}" class="w-full bg-dark-600 p-4 rounded-lg text-sm" rows="3" placeholder="Write your answer..."></textarea>
+            <button onclick="postReply('${doc.id}')" class="mt-2 px-6 py-2 bg-primary-400 text-dark-800 font-medium rounded-lg hover:opacity-90 transition-all">
+              Post Answer
+            </button>
+          </div>
+        </div>
+      `;
+      questionsDiv.innerHTML += questionHTML;
+    });
+  }
+
+  // Like or Unlike a question
+  async function likeQuestion(questionId) {
+    const user = auth.currentUser;
+    if (!user) {
+      alert('Sign in to like questions.');
+      return;
+    }
+
+    const questionRef = db.collection('forum').doc(questionId);
+    const questionDoc = await questionRef.get();
+    const data = questionDoc.data();
+
+    if (data.likes.includes(user.uid)) {
+      // Unlike
+      await questionRef.update({
+        likes: firebase.firestore.FieldValue.arrayRemove(user.uid)
+      });
+    } else {
+      // Like
+      await questionRef.update({
+        likes: firebase.firestore.FieldValue.arrayUnion(user.uid)
+      });
+    }
+
+    loadQuestions();
+  }
+
+  // Show the reply form
+  function showReplyForm(questionId) {
+    const replyForm = document.getElementById(`replyForm-${questionId}`);
+    replyForm.classList.toggle('hidden');
+  }
+
+  // Post a reply
+  async function postReply(questionId) {
+    const replyText = document.getElementById(`replyInput-${questionId}`).value.trim();
+    if (!replyText) {
+      alert('Please type your answer.');
+      return;
+    }
+
+    const user = auth.currentUser;
+    if (!user) {
+      alert('You must be signed in to post a reply.');
+      return;
+    }
+
+    const questionRef = db.collection('forum').doc(questionId);
+
+    try {
+      await questionRef.update({
+        answers: firebase.firestore.FieldValue.arrayUnion(replyText)
+      });
+
+      document.getElementById(`replyInput-${questionId}`).value = '';
+      loadQuestions();
+    } catch (error) {
+      console.error(error);
+      alert('Error posting reply.');
+    }
+  }
+
+  // Listen for auth state change
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      loadQuestions();
+    }
+  });
+</script>
+
+</body>
+</html>

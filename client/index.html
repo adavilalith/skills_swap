@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillSwap - Learn, Teach, Grow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-green: #00E689;
+      --dark-bg: #1C1C1C;
+      --darker-bg: #171717;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--darker-bg);
+    }
+  </style>
+</head>
+<body class="text-white">
+  <!-- Navigation -->
+  <nav class="bg-[#1C1C1C] border-b border-[#2a2a2a] fixed w-full z-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-[#00E689] text-2xl font-bold">SkillSwap</a>
+          <a href="#features" class="nav-link hover:text-[#00E689]">Features</a>
+          <a href="#tiers" class="nav-link hover:text-[#00E689]">Tiers</a>
+          <a href="#forum" href="forum.html" class="nav-link hover:text-[#00E689]">Forum</a>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="signin.html" class="px-6 py-2 rounded-lg border border-[#00E689] text-[#00E689] hover:bg-[#00E689] hover:text-black transition-all">Sign In</a>
+          <a href="register.html" class="px-6 py-2 rounded-lg bg-[#00E689] text-black hover:opacity-90 transition-all">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="pt-32 pb-20 px-4">
+    <div class="max-w-7xl mx-auto text-center">
+      <h1 class="text-5xl font-bold mb-6">Learn from the Best,<br>Become the Best</h1>
+      <p class="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">Join our unique tier-based learning community where knowledge flows freely between learners and teachers.</p>
+      <a href="signup.html" class="inline-block px-8 py-3 bg-[#00E689] text-black rounded-lg font-semibold hover:opacity-90 transition-all">Get Started</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-20 bg-[#1C1C1C]">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">Platform Features</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="p-6 bg-[#171717] rounded-xl">
+          <i class="fas fa-users text-[#00E689] text-3xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-3">Tier System</h3>
+          <p class="text-gray-400">Progress through tiers by learning and teaching others. Higher tiers unlock more privileges.</p>
+        </div>
+        <div class="p-6 bg-[#171717] rounded-xl">
+          <i class="fas fa-comments text-[#00E689] text-3xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-3">Community Forum</h3>
+          <p class="text-gray-400">Engage in discussions, ask questions, and share knowledge with fellow learners.</p>
+        </div>
+        <div class="p-6 bg-[#171717] rounded-xl">
+          <i class="fas fa-chalkboard-teacher text-[#00E689] text-3xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-3">Live Sessions</h3>
+          <p class="text-gray-400">Gold tier members can conduct one-on-one sessions and live classes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tiers Section -->
+  <section id="tiers" class="py-20">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">Tier System</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="p-6 bg-[#1C1C1C] rounded-xl border border-gray-700">
+          <h3 class="text-xl font-semibold mb-3">Bronze Tier</h3>
+          <p class="text-gray-400 mb-4">Learning focused membership</p>
+          <ul class="text-sm text-gray-400">
+            <li class="mb-2">✓ Access to learning materials</li>
+            <li class="mb-2">✓ View forum discussions</li>
+            <li class="mb-2">✓ Basic profile features</li>
+          </ul>
+        </div>
+        <div class="p-6 bg-[#1C1C1C] rounded-xl border border-gray-700">
+          <h3 class="text-xl font-semibold mb-3">Silver Tier</h3>
+          <p class="text-gray-400 mb-4">Enhanced interaction capabilities</p>
+          <ul class="text-sm text-gray-400">
+            <li class="mb-2">✓ Forum participation</li>
+            <li class="mb-2">✓ One-on-one sessions</li>
+            <li class="mb-2">✓ Answer questions</li>
+          </ul>
+        </div>
+        <div class="p-6 bg-[#1C1C1C] rounded-xl border border-[#00E689]">
+          <h3 class="text-xl font-semibold mb-3">Gold Tier</h3>
+          <p class="text-gray-400 mb-4">Advanced teaching privileges</p>
+          <ul class="text-sm text-gray-400">
+            <li class="mb-2">✓ Host live classes</li>
+            <li class="mb-2">✓ Create course content</li>
+            <li class="mb-2">✓ Premium mentorship features</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#1C1C1C] py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between items-center">
+        <div>
+          <h3 class="text-[#00E689] text-2xl font-bold mb-2">SkillSwap</h3>
+          <p class="text-gray-400">Learn, Teach, Grow Together</p>
+        </div>
+        <div class="flex gap-6">
+          <a href="#" class="text-gray-400 hover:text-[#00E689]"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="text-gray-400 hover:text-[#00E689]"><i class="fab fa-discord"></i></a>
+          <a href="#" class="text-gray-400 hover:text-[#00E689]"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

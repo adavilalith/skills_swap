@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['DM Sans', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              400: '#00c896',
+              500: '#00b383',
+            },
+            dark: {
+              800: '#1f1f1f',
+              700: '#2a2a2a',
+              600: '#3a3a3a',
+              500: '#4a4a4a',
+            }
+          }
+        }
+      }
+    }
+
+    
+  </script>
+
+  <style>
+    /* Styles for loader and form are unchanged */
+    .loader-container {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: #1f1f1f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .loader {
+      position: relative;
+      width: 120px;
+      height: 90px;
+    }
+
+    .loader:before {
+      content: "";
+      position: absolute;
+      bottom: 30px;
+      left: 50px;
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      background: #00c896;
+      animation: loading-bounce 0.5s ease-in-out infinite alternate;
+    }
+
+    .loader:after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 7px;
+      width: 45px;
+      border-radius: 4px;
+      box-shadow: 0 5px 0 #f2f2f2, -35px 50px 0 #f2f2f2, -70px 95px 0 #f2f2f2;
+      animation: loading-step 1s ease-in-out infinite;
+    }
+
+    @keyframes loading-bounce {
+      0% { transform: scale(1, 0.7); }
+      40% { transform: scale(0.8, 1.2); }
+      60% { transform: scale(1, 1); }
+      100% { bottom: 140px; }
+    }
+
+    @keyframes loading-step {
+      0% {
+        box-shadow: 0 10px 0 rgba(0, 0, 0, 0), 0 10px 0 #f2f2f2,
+          -35px 50px 0 #f2f2f2, -70px 90px 0 #f2f2f2;
+      }
+      100% {
+        box-shadow: 0 10px 0 #f2f2f2, -35px 50px 0 #f2f2f2,
+          -70px 90px 0 #f2f2f2, -70px 90px 0 rgba(0, 0, 0, 0);
+      }
+    }
+
+    /* Smooth transitions for interactive elements */
+    input, button {
+      transition: all 0.2s ease;
+    }
+
+    /* Fix autofill styles */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #2a2a2a inset !important;
+      -webkit-text-fill-color: #f2f2f2 !important;
+    }
+  </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+</head>
+
+<body class="bg-dark-800 min-h-screen font-sans text-gray-100">
+
+  <!-- Loader -->
+  <div id="loader" class="loader-container">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Signup Form -->
+  <div class="container mx-auto min-h-screen flex items-center justify-center p-4">
+    <div class="flex flex-col md:flex-row w-full max-w-6xl bg-dark-800 rounded-none overflow-hidden">
+      
+      <!-- Left Form -->
+      <div class="w-full md:w-1/2 p-8 md:p-10 lg:p-12">
+        <div class="max-w-md mx-auto">
+          <div class="text-center md:text-left mb-8">
+            <h1 class="text-3xl font-bold mb-2 bg-gradient-to-r from-primary-400 to-emerald-400 bg-clip-text text-transparent">
+              Create Account
+            </h1>
+            <p class="text-gray-400 text-sm">Join our community by filling out the form below</p>
+          </div>
+
+          <form id="signupForm" class="space-y-5">
+
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+              <input type="text" id="firstName" placeholder="John"
+                class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400 placeholder-gray-500 text-sm" required>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+              <input type="text" id="lastName" placeholder="Doe"
+                class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400 placeholder-gray-500 text-sm" required>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+              <input type="text" id="username" placeholder="johndoe"
+                class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400 placeholder-gray-500 text-sm" required>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+              <input type="email" id="email" placeholder="you@example.com"
+                class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400 placeholder-gray-500 text-sm" required>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+              <input type="password" id="password" placeholder="••••••••"
+                class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400 placeholder-gray-500 text-sm" required>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Bio</label>
+              <textarea id="bio" placeholder="Tell us about yourself" class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400 placeholder-gray-500 text-sm"></textarea>
+            </div>
+
+            <!-- Dynamic Skills -->
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Skills (Skill Name + Level)</label>
+              <div id="skillsList" class="space-y-2"></div>
+              <button type="button" onclick="addSkill()" class="mt-2 text-primary-400 text-sm hover:text-primary-300">+ Add Skill</button>
+            </div>
+
+            <!-- Dynamic Goals -->
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Goals</label>
+              <div id="goalsList" class="space-y-2"></div>
+              <button type="button" onclick="addGoal()" class="mt-2 text-primary-400 text-sm hover:text-primary-300">+ Add Goal</button>
+            </div>
+
+            <div class="pt-4">
+              <button type="submit"
+                class="w-full py-3 px-6 bg-gradient-to-r from-primary-400 to-primary-500 text-dark-800 font-medium rounded-lg transition-all duration-200 hover:opacity-90">
+                Sign Up
+              </button>
+            </div>
+
+          </form>
+
+          <div class="mt-6 text-center text-sm text-gray-500">
+            Already have an account?
+            <a href="signin.html" class="font-medium text-primary-400 hover:text-primary-300 transition-colors">Sign in</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Illustration -->
+      <div class="hidden md:block md:w-1/2 bg-dark-800 relative">
+        <div class="absolute inset-0 flex items-center justify-center p-8">
+          <img src="./images/sign-in-dark.svg" alt="Sign Up Illustration"
+            class="w-full h-auto max-h-[70vh] object-contain">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JS Section -->
+  <script>
+    // Firebase config
+    var firebaseConfig = {
+        apiKey: "AIzaSyBJrftwU-HT6UkeUkQVZekXccOQebi2Fd8",
+        authDomain: "skillsswap-df801.firebaseapp.com",
+        projectId: "skillsswap-df801",
+        storageBucket: "skillsswap-df801.firebasestorage.app",
+        messagingSenderId: "638710357631",
+        appId: "1:638710357631:web:2b0dc4a9b779eae47ae94a",
+        measurementId: "G-1C3983Z2N1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Page Loader
+    window.addEventListener('load', function () {
+      setTimeout(() => {
+        const loader = document.getElementById('loader');
+        loader.style.opacity = '0';
+        setTimeout(() => {
+          loader.style.display = 'none';
+        }, 500);
+      }, 800);
+    });
+
+    // Add dynamic skill input
+    function addSkill() {
+      const div = document.createElement('div');
+      div.className = "flex gap-2";
+      div.innerHTML = `
+        <input type="text" placeholder="Skill Name" class="flex-1 px-3 py-2 bg-dark-700 border border-dark-600 rounded text-sm" required>
+        <input type="number" placeholder="Level" class="w-20 px-3 py-2 bg-dark-700 border border-dark-600 rounded text-sm" required>
+      `;
+      document.getElementById('skillsList').appendChild(div);
+    }
+
+    // Add dynamic goal input
+    function addGoal() {
+      const input = document.createElement('input');
+      input.type = "text";
+      input.placeholder = "Enter Goal";
+      input.className = "w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded text-sm";
+      input.required = true;
+      document.getElementById('goalsList').appendChild(input);
+    }
+
+    // Signup Form
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const bio = document.getElementById('bio').value.trim();
+
+      const skills = {};
+      document.querySelectorAll('#skillsList > div').forEach(skillDiv => {
+        const [skillName, skillLevel] = skillDiv.querySelectorAll('input');
+        if (skillName.value && skillLevel.value) {
+          skills[skillName.value.trim()] = parseInt(skillLevel.value);
+        }
+      });
+
+      const goals = [];
+      document.querySelectorAll('#goalsList input').forEach(goalInput => {
+        if (goalInput.value.trim()) {
+          goals.push(goalInput.value.trim());
+        }
+      });
+
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        await db.collection('users').doc(user.uid).set({
+          first_name: firstName,
+          last_name: lastName,
+          username: username,
+          email: email,
+          bio: bio,
+          skills: skills,
+          goals: goals,
+          connections: [],
+          followers: [],
+          following: [],
+          connection_requests: [],
+          created_at: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        window.location.href = "index.html";
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    });
+  </script>
+
+</body>
+</html>
