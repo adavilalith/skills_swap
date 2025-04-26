@@ -12,7 +12,8 @@ pc = Pinecone(
     api_key=pinecone_api_key,
 )
 index_name = "user-embeddings"
-index = pc.Index(index_name)
+skill_index = pc.Index("user-skill-embeddings")
+goal_index = pc.Index("user-goal-embeddings")
 
 
 class UserRequest(BaseModel):
@@ -27,10 +28,10 @@ async def get_users_with_required_goals(request: UserRequest, k: int = 5):
         raise HTTPException(status_code=400, detail="Parameter 'k' must be greater than 0")
 
     try:
-        user_vector_response = index.fetch(ids=[request.user_id])
+        user_vector_response = goal_index.fetch(ids=[request.user_id])
         user_vector = user_vector_response.vectors[request.user_id].values
 
-        query_result = index.query(
+        query_result = skill_index.query(
             vector=user_vector,
             top_k=k,
             include_metadata=True

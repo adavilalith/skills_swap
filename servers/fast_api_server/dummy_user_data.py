@@ -3,6 +3,8 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from faker import Faker
 from datetime import datetime
+from dummy_user_data import create_user_embeddings
+
 frameworks = [
     "Django,Python",
     "Flask,Python",
@@ -111,6 +113,10 @@ def create_random_user():
 def upload_users_to_firebase(num_users):
     for _ in range(num_users):
         user = create_random_user()
+
         db.collection("users").add(user)
+
+
+
 
 upload_users_to_firebase(10)

@@ -73,7 +73,11 @@ def get_random_items(items, num_items):
 
 import random
 import string
-from firebase_admin import firestore
+
+def generate_firebase_id(length=20):
+    chars = string.ascii_letters + string.digits  # a-z A-Z 0-9
+    return ''.join(random.choice(chars) for _ in range(length))
+
 
 
 def assign_to_users(frameworks, languages, num_users=10):
@@ -126,3 +130,8 @@ pinecone_index.upsert(vectors=pinecone_data)
 
 print(f"User embeddings successfully stored in Pinecone index '{index_name}'.")
 
+def create_user_embedding(user_id,):
+    
+    embedding = model.encode()
+    pinecone_index.upsert(vectors=[(user_id, embedding.tolist())])
+    print(f"User embedding for '{user_id}' successfully stored in Pinecone index '{index_name}'.")
