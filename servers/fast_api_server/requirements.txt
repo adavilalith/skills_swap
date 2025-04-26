@@ -1,0 +1,4 @@
+fastapi==0.115.12
+pinecone==6.0.2
+pydantic==2.11.3
+sentence_transformers==4.1.0
